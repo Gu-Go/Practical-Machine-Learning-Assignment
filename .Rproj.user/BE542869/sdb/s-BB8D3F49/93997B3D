@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "rm(list=ls())    # free up memory for the download of the data sets\nsetwd(\"C:/Users/selin2/Documents/Data Science/Machine Learning\")\nlibrary(caret)\n\nUrlTrain <- \"http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv\"\nUrlTest  <- \"http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv\"\n\ntraining <- read.csv(url(UrlTrain))\ntesting  <- read.csv(url(UrlTest))\n\n### Exploring Data\ndim(training)\ntable(training$classe)\ndim(testing)\ntraining <- training[,!sapply(training,function(x) any(is.na(x)))]\n#remove the first 7 columns that are not related to the classe variable\ntraining <- training[,-c(1:7)]\ndim(training)\ntraining <- training[,-nearZeroVar(training)]\n#testing <- testing[,-nearZeroVar(testing)]\n#dim(training)\nset.seed(333)\n#prepare training scheme\ncontrol <- trainControl(method=\"cv\", number=2, allowParallel = TRUE)\nmodrf <- train(classe~., data=training, method=\"rf\",trControl=control)\npredrf <- predict(modrf,training)\nconfusionMatrix(predrf,training$classe)$overall[1]\ntable(predrf,training$classe)\nmodgbm <- train(classe~., data=training, method=\"gbm\",trControl=control)\npredgbm <- predict(modgbm,training)\nconfusionMatrix(predgbm,training$classe)$overall[1]\ntable(predgbm,training$classe)\nmodlda <- train(classe~., data=training, method=\"lda\",trControl=control)\npredlda <- predict(modlda,training)\nconfusionMatrix(predlda,training$classe)$overall[1]\ntable(predlda,training$classe)\npredT = predict(modrf,testing)\npredT\n",
+    "created" : 1498789744050.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3720456906",
+    "id" : "93997B3D",
+    "lastKnownWriteTime" : 1498842854,
+    "last_content_update" : 1498842854213,
+    "path" : "~/Data Science/Machine Learning/classassignment.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

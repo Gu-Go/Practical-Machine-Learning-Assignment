@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Practice Machine Learning Peer-Graded Assignment\"\nauthor: \"Ella\"\ndate: \"June 29, 2017\"\noutput: html_document\n---\n\n### Overview\n\nThis is an R Markdown document for Practice Machine Learning Peer-Graded Assignment. The goal of this project is to predict the manner in which participants did the exercise. \n\n### Background\nUsing devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, the goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants to predict the manner in which they did the exercise.\n\n### Data set\nAll 6 participants were asked to perform barbell lifts correctly and incorrectly in 5 different ways.\n\nThe training data for this project are available here:\nhttps://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv\n\nThe test data are available here:\nhttps://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv\n\nThe data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. \n\n### Preparation\n```{r preparation}\nrm(list=ls())    # free up memory for the download of the data sets\nsetwd(\"C:/Users/selin2/Documents/Data Science/Machine Learning/PMLAssignment\")\nlibrary(caret)\n\ntrainUrl <- \"http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv\"\ntestUrl  <- \"http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv\"\n\ntraining <- read.csv(url(trainUrl))\ntesting  <- read.csv(url(testUrl))\n```\n\n### Exploring Data\n```{r data}\ndim(training)\ntable(training$classe)\ndim(testing)\n```\nThere are 19622 observations and 160 variables in the training data set with Classe A has the most observations.  The testing data set inclused 20 observations and 160 variables. \n\n### Cleaning Up Data\n####Remove NA columns\n```{r cleanup}\ntraining <- training[,!sapply(training,function(x) any(is.na(x)))]\ndim(training)\n```\n####Remove the first 7 columns that are not related to the classe variable\n```{r cleanup2}\ntraining <- training[,-c(1:7)]\ndim(training)\n```\n####Remove the Near Zero variance variables\n```{r cleanup3}\ntraining <- training[,-nearZeroVar(training)]\ndim(training)\n```\n###Cross Validation -- Building Prediction Models\n```{r cv}\n# set seed to 33833\nset.seed(333)\n#prepare training scheme\ncontrol <- trainControl(method=\"cv\", number=2, allowParallel = TRUE)\n```\n####Train with the Random Forest model\n```{r rf}\nmodrf = train(classe~.,data=training,method=\"rf\",trControl=control)\npredrf <- predict(modrf,training)\nconfusionMatrix(predrf,training$classe)$overall[1]\ntable(predrf,training$classe)\n```\n####Train with the Generalized Boosted Regression Model \n```{r gbm}\nmodgbm <- train(classe~.,data=training,method=\"gbm\",trControl=control,verbose = FALSE)\npredgbm <- predict(modgbm,training)\nconfusionMatrix(predgbm,training$classe)$overall[1]\ntable(predgbm,training$classe)\n```\n####Train with the Linear Discriminant Analysis (lda) Model\n```{r lda}\nmodlda <- train(classe~.,data=training,method=\"lda\",trControl=control)\npredlda <- predict(modlda,training)\nconfusionMatrix(predlda,training$classe)$overall[1]\ntable(predlda,training$classe)\n```\n###Predict the Test Data\nSince the Random Forest model has the highest accuracy 1 than the GBM model 0.9722 or the LDA model 0.7048211, the Random Forest model will be used to predict the test data\n```{r}\npredT = predict(modrf,testing)\npredT\n```\n\n",
+    "created" : 1498842912141.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1051853569",
+    "id" : "6C2C7935",
+    "lastKnownWriteTime" : 1498855036,
+    "last_content_update" : 1498855036058,
+    "path" : "~/Data Science/Machine Learning/PMLAssignment/PMLClassAssignment.Rmd",
+    "project_path" : "PMLClassAssignment.Rmd",
+    "properties" : {
+        "source_window_id" : "",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

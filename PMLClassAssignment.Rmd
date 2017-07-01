@@ -1,0 +1,97 @@
+---
+title: "Practice Machine Learning Peer-Graded Assignment"
+author: "Ella"
+date: "June 29, 2017"
+output: html_document
+---
+
+### Overview
+
+This is an R Markdown document for Practice Machine Learning Peer-Graded Assignment. The goal of this project is to predict the manner in which participants did the exercise. 
+
+### Background
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, the goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants to predict the manner in which they did the exercise.
+
+### Data set
+All 6 participants were asked to perform barbell lifts correctly and incorrectly in 5 different ways.
+
+The training data for this project are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. 
+
+### Preparation
+```{r preparation}
+rm(list=ls())    # free up memory for the download of the data sets
+setwd("C:/Users/selin2/Documents/Data Science/Machine Learning/PMLAssignment")
+library(caret)
+
+trainUrl <- "http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+testUrl  <- "http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+
+training <- read.csv(url(trainUrl))
+testing  <- read.csv(url(testUrl))
+```
+
+### Exploring Data
+```{r data}
+dim(training)
+table(training$classe)
+dim(testing)
+```
+There are 19622 observations and 160 variables in the training data set with Classe A has the most observations.  The testing data set inclused 20 observations and 160 variables. 
+
+### Cleaning Up Data
+####Remove NA columns
+```{r cleanup}
+training <- training[,!sapply(training,function(x) any(is.na(x)))]
+dim(training)
+```
+####Remove the first 7 columns that are not related to the classe variable
+```{r cleanup2}
+training <- training[,-c(1:7)]
+dim(training)
+```
+####Remove the Near Zero variance variables
+```{r cleanup3}
+training <- training[,-nearZeroVar(training)]
+dim(training)
+```
+###Cross Validation -- Building Prediction Models
+```{r cv}
+# set seed to 33833
+set.seed(333)
+#prepare training scheme
+control <- trainControl(method="cv", number=2, allowParallel = TRUE)
+```
+####Train with the Random Forest model
+```{r rf}
+modrf = train(classe~.,data=training,method="rf",trControl=control)
+predrf <- predict(modrf,training)
+confusionMatrix(predrf,training$classe)$overall[1]
+table(predrf,training$classe)
+```
+####Train with the Generalized Boosted Regression Model 
+```{r gbm}
+modgbm <- train(classe~.,data=training,method="gbm",trControl=control,verbose = FALSE)
+predgbm <- predict(modgbm,training)
+confusionMatrix(predgbm,training$classe)$overall[1]
+table(predgbm,training$classe)
+```
+####Train with the Linear Discriminant Analysis (lda) Model
+```{r lda}
+modlda <- train(classe~.,data=training,method="lda",trControl=control)
+predlda <- predict(modlda,training)
+confusionMatrix(predlda,training$classe)$overall[1]
+table(predlda,training$classe)
+```
+###Predict the Test Data
+Since the Random Forest model has the highest accuracy 1 than the GBM model 0.9722 or the LDA model 0.7048211, the Random Forest model will be used to predict the test data
+```{r}
+predT = predict(modrf,testing)
+predT
+```
+

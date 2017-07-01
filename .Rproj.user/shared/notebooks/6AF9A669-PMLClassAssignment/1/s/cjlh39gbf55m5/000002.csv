@@ -1,0 +1,14 @@
+"0","rm(list=ls())    # free up memory for the download of the data sets
+setwd(""C:/Users/selin2/Documents/Data Science/Machine Learning/PMLAssignment"")
+library(caret)
+"
+"2","package ‘caret’ was built under R version 3.3.3"
+"2","Loading required package: lattice
+"
+"2","Loading required package: ggplot2
+"
+"2","package ‘ggplot2’ was built under R version 3.3.3"
+"0","UrlTrain <- ""http://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"""
+"0","UrlTest  <- ""http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"""
+"0","training <- read.csv(url(UrlTrain))"
+"0","testing  <- read.csv(url(UrlTest))"

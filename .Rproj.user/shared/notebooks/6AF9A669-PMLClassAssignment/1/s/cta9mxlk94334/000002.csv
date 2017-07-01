@@ -1,0 +1,14 @@
+"0","training <- training[,!sapply(training,function(x) any(is.na(x)))]
+testing <- testing[,!sapply(testing,function(x) any(is.na(x)))]
+dim(training);dim(testing)
+"
+"1","[1]"
+"1"," 19622"
+"1","    93"
+"1","
+"
+"1","[1]"
+"1"," 20"
+"1"," 60"
+"1","
+"
