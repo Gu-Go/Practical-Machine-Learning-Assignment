@@ -126,17 +126,17 @@ confusionMatrix(predlda,training$classe)$overall[1]
 ####  Accuracy 
 #### 0.7048211
 table(predlda,training$classe)
-##        
-## predlda    A    B    C    D    E
-##       A 4568  586  341  191  133
-##       B  121 2429  333  130  611
-##       C  444  455 2254  379  323
-##       D  429  148  411 2383  344
-##       E   18  179   83  133 2196
+####        
+#### predlda    A    B    C    D    E
+####       A 4568  586  341  191  133
+####       B  121 2429  333  130  611
+####       C  444  455 2254  379  323
+####       D  429  148  411 2383  344
+####       E   18  179   83  133 2196
 Predict the Test Data
 Since the Random Forest model has the highest accuracy 1 than the GBM model 0.9722 or the LDA model 0.7048211, the Random Forest model will be used to predict the test data
 
 predT = predict(modrf,testing)
 predT
-##  [1] B A B A A E D B A A B C B A E E A B B B
-## Levels: A B C D E
+####  [1] B A B A A E D B A A B C B A E E A B B B
+#### Levels: A B C D E
